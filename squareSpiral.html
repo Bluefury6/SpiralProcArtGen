@@ -127,6 +127,8 @@
             t = 0;
         }
 
+        // temporarily removed due to bugs
+        /*
         document.getElementById('myCanvas').addEventListener('click', function(event) {
             if (t === 0) {
                 cornerPos.push([event.clientX, event.clientY]);
@@ -135,17 +137,13 @@
                 ctx.fillRect(event.clientX, event.clientY, 10, 10);
             }
         })
+        */
 
-        document.addEventListener('keyup', function(event) {
-            if ((event.keyCode === 32 || event.key === " ") && (cornerPos.length > 2) && t === 0) {
-                cornerPos.push(cornerPos[0]);
-                
+        document.addEventListener('click', function(event) {
+            cornerPos.push(cornerPos[0]);
+            
 
-                reset();
-            } else {
-                //ctx.fillStyle = 'black';
-                //ctx.fillRect(0, 0, 5000, 5000);
-            }
+            reset();
         })
 
     </script>
