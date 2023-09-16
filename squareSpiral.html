@@ -11,6 +11,7 @@
 
     <script>
         // <button onClick="reset()">Reset</button>
+        let width = 5;
 
         let cornerPos = [
             [25, 25],
@@ -19,7 +20,41 @@
             [25, 900],
         ]
 
+        const randInt = (max) => {
+            return Math.floor(Math.random() * max)
+        }
+
+        const generateCornerPos = () => {
+            cornerPos = [];
+            console.log(cornerPos)
+            let cNum = randInt(5) + 4;
+
+            for (let i = 0; i < cNum; i++) {
+                if (i < cNum/2) {
+                    cornerPos.push([i*1800/cNum, randInt(300)]);
+                } else {
+                    cornerPos.push([(cNum - i)*1800/cNum, randInt(300) + 300]);
+                }
+            }
+            
+            let scale = 1;
+            let min = 1000;
+
+            for (let i = 0; i < cNum; i++) {
+                if (Math.sqrt((cornerPos[i])**2 + (cornerPos[i+1])**2) < min) {
+                    min = Math.sqrt((cornerPos[i])**2 + (cornerPos[i+1])**2);
+                }
+            }
+
+            width *= scale;
+            console.log("width: " + width);
+            
+
+            cornerPos.push(cornerPos[0]);
+        }
+
         const reset = () => {
+            generateCornerPos();
 
             ctx.fillStyle = 'black';
             ctx.fillRect(0, 0, 5000, 5000);
@@ -41,17 +76,12 @@
         let t = 0;
 
         const makeSpiral = async () => {
-            console.log("resetting")
+            // console.log("resetting")
             let cStyle = 'black';
 
             const wait = 10;
-            let width = 10;
             const reso = 250;
             const goodColor = false;
-
-            const randInt = (max) => {
-                return Math.floor(Math.random() * max)
-            }
 
             let r1 = randInt(255);
             let g1 = randInt(255);
@@ -63,8 +93,9 @@
 
 
 
-            while (Math.sqrt((cornerPos[0][0] - cornerPos[1][0])**2 + (cornerPos[0][1] - cornerPos[1][1])**2) > 2) {
+            while (Math.sqrt((cornerPos[0][0] - cornerPos[1][0])**2 + (cornerPos[0][1] - cornerPos[1][1])**2) > 2 && t < 100) {
                 t++
+                await delay(25);
 
                 if (goodColor) {
                     cStyle = `rgb(
@@ -79,14 +110,8 @@
                         ${b1*(t/20) + b2*(1- t/20)}
                     )`;
                 }
-                
-                for (let i = 0; i < cornerPos.length - 1; i++) {
-                    ctx.fillRect(cornerPos[i][0], cornerPos[i][1], width, width);
 
-                    await delay(wait);
-                }
-
-                //console.log("test")
+                // console.log("test")
                 for (let i = 0; i < cornerPos.length - 1; i++) {
 
                     ctx.fillRect(cornerPos[i][0], cornerPos[i][1], width, width);
@@ -97,8 +122,10 @@
                     let y = cornerPos[i][1]
                     let dy = cornerPos[i+1][1] - y;
 
+                    let loopTime = 0;
+                    let hitRange = 100*width;
 
-                    while (Math.floor(25*x) != Math.floor(25*cornerPos[i+1][0]) && Math.floor(25*y) != Math.floor(25*cornerPos[i+1][1])) {
+                    while (Math.floor(hitRange*x) != Math.floor(hitRange*cornerPos[i+1][0]) && Math.floor(hitRange*y) != Math.floor(hitRange*cornerPos[i+1][1]) && loopTime < 600) {
                         
                         ctx.fillStyle = cStyle;
                         ctx.fillRect(x, y, width, width);
@@ -106,7 +133,9 @@
                         x += dx/reso;
                         y += dy/reso;
 
+                        loopTime++;
 
+                        //await delay(0);
                     }
                 }
                 
@@ -125,6 +154,8 @@
 
             //cornerPos = [];
             t = 0;
+            width = 5;
+            console.log("finished");
         }
 
         // temporarily removed due to bugs
@@ -144,7 +175,7 @@
                 return null;
             }
 
-            console.log("activating");
+            // console.log("activating");
             
             cornerPos = [
                 [25, 25],
