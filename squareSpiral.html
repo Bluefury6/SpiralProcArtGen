@@ -10,7 +10,7 @@
     <canvas id="myCanvas"></canvas>
 
     <script>
-        //<button onClick="reset()">Reset</button>
+        // <button onClick="reset()">Reset</button>
 
         let cornerPos = [
             [25, 25],
@@ -20,9 +20,9 @@
         ]
 
         const reset = () => {
-            
+
             ctx.fillStyle = 'black';
-            //ctx.fillRect(0, 0, 5000, 5000);
+            ctx.fillRect(0, 0, 5000, 5000);
 
             makeSpiral();
         }
@@ -41,13 +41,13 @@
         let t = 0;
 
         const makeSpiral = async () => {
-            console.log("space pressed")
+            console.log("resetting")
             let cStyle = 'black';
 
             const wait = 10;
             let width = 10;
             const reso = 250;
-            const goodColor = true;
+            const goodColor = false;
 
             const randInt = (max) => {
                 return Math.floor(Math.random() * max)
@@ -63,7 +63,7 @@
 
 
 
-            while (Math.sqrt((cornerPos[0][0] - cornerPos[1][0])**2 + (cornerPos[0][1] - cornerPos[1][1])**2) > 0.1) {
+            while (Math.sqrt((cornerPos[0][0] - cornerPos[1][0])**2 + (cornerPos[0][1] - cornerPos[1][1])**2) > 2) {
                 t++
 
                 if (goodColor) {
@@ -86,7 +86,7 @@
                     await delay(wait);
                 }
 
-                console.log("amogus")
+                //console.log("test")
                 for (let i = 0; i < cornerPos.length - 1; i++) {
 
                     ctx.fillRect(cornerPos[i][0], cornerPos[i][1], width, width);
@@ -123,7 +123,7 @@
                 width /= 1.1;
             }
 
-            cornerPos = [];
+            //cornerPos = [];
             t = 0;
         }
 
@@ -140,9 +140,20 @@
         */
 
         document.addEventListener('click', function(event) {
+            if (t != 0) {
+                return null;
+            }
+
+            console.log("activating");
+            
+            cornerPos = [
+                [25, 25],
+                [900, 25],
+                [900, 900],
+                [25, 900],
+            ]
             cornerPos.push(cornerPos[0]);
             
-
             reset();
         })
 
