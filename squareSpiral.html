@@ -12,6 +12,23 @@
     <script>
         // <button onClick="reset()">Reset</button>
         let width = 5;
+        const wait = 10;
+        const reso = 250;
+        const oneColor = false;
+        const highCont = true;
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const delay = ms => new Promise(res => setTimeout(res, ms));
+
+        ctx.fillStyle = 'black';
+        ctx.fillRect(0, 0, 5000, 5000);
+
+        let t = 0;
+        let scale = 1;
+        let min = 1000;
 
         let cornerPos = [
             [25, 25],
@@ -29,16 +46,17 @@
             console.log(cornerPos)
             let cNum = randInt(5) + 4;
 
-            for (let i = 0; i < cNum; i++) {
+            for (let i = 1; i <= cNum; i++) {
                 if (i < cNum/2) {
-                    cornerPos.push([i*1800/cNum, randInt(300)]);
+                    let p = [i*1800/cNum, randInt(300)];
+                    console.log("adding " + p + " to cornerPos");
+                    cornerPos.push(p);
                 } else {
-                    cornerPos.push([(cNum - i)*1800/cNum, randInt(300) + 300]);
+                    let p = [(cNum - i + 1)*1800/cNum, randInt(300) + 300];
+                    console.log("adding " + p + " to cornerPos");
+                    cornerPos.push(p);
                 }
             }
-            
-            let scale = 1;
-            let min = 1000;
 
             for (let i = 0; i < cNum; i++) {
                 if (Math.sqrt((cornerPos[i])**2 + (cornerPos[i+1])**2) < min) {
@@ -62,42 +80,29 @@
             makeSpiral();
         }
 
-        const canvas = document.getElementById('myCanvas');
-        const ctx = canvas.getContext('2d');
-        const showMoreAnimation = false;
-
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        const delay = ms => new Promise(res => setTimeout(res, ms));
-
-        ctx.fillStyle = 'black';
-        ctx.fillRect(0, 0, 5000, 5000);
-
-        let t = 0;
-
         const makeSpiral = async () => {
             // console.log("resetting")
             let cStyle = 'black';
 
-            const wait = 10;
-            const reso = 250;
-            const goodColor = false;
-
-            let r1 = randInt(255);
-            let g1 = randInt(255);
-            let b1 = randInt(255);
-
+            r1 = randInt(255);
+            g1 = randInt(255);
+            b1 = randInt(255);
+           
             let r2 = randInt(255);
             let g2 = randInt(255);
             let b2 = randInt(255);
-
-
-
-            while (Math.sqrt((cornerPos[0][0] - cornerPos[1][0])**2 + (cornerPos[0][1] - cornerPos[1][1])**2) > 2 && t < 100) {
+            
+            while (Math.sqrt((cornerPos[0][0] - cornerPos[1][0])**2 + (cornerPos[0][1] - cornerPos[1][1])**2) > 2 && t < 50) {
                 t++
                 await delay(25);
 
-                if (goodColor) {
+                if (highCont) {
+                    r2 = 255 - r1;
+                    g2 = 255 - g1;
+                    b2 = 255 - b1;
+                }
+
+                if (oneColor) {
                     cStyle = `rgb(
                         ${255*(t/30)}, 
                         ${(255 - 255*(t/30))}, 
@@ -125,7 +130,7 @@
                     let loopTime = 0;
                     let hitRange = 100*width;
 
-                    while (Math.floor(hitRange*x) != Math.floor(hitRange*cornerPos[i+1][0]) && Math.floor(hitRange*y) != Math.floor(hitRange*cornerPos[i+1][1]) && loopTime < 600) {
+                    while ((Math.sqrt((x-cornerPos[i+1][0])**2 + (y-cornerPos[i+1][1])**2) > Math.sqrt((x-cornerPos[i+1][0]+(dx/reso))**2 + (y-cornerPos[i+1][1]+(dy/reso))**2)) && loopTime < 600) {
                         
                         ctx.fillStyle = cStyle;
                         ctx.fillRect(x, y, width, width);
@@ -135,7 +140,7 @@
 
                         loopTime++;
 
-                        //await delay(0);
+                        // await delay(0);
                     }
                 }
                 
@@ -143,7 +148,7 @@
                     cornerPos[i][0] += (cornerPos[i+1][0] - cornerPos[i][0])/10;
                     cornerPos[i][1] += (cornerPos[i+1][1] - cornerPos[i][1])/10;
 
-                    ctx.fillRect(cornerPos[i][0], cornerPos[i][1], width, width);
+                    // ctx.fillRect(cornerPos[i][0], cornerPos[i][1], width, width);
                 }
 
                 cornerPos[cornerPos.length - 1][0] = cornerPos[0][0];
